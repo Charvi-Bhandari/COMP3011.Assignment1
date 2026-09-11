@@ -19,7 +19,14 @@
 
     <h2>Transcription</h2>
     <p id="transcription">Your transcription will appear here.</p>
-
+	
+	<script>
+		const startButton = document.getElementById("startButton");
+		
+		startButton.addEventListener("click", async () =>{
+			const stream = await navigator.mediaDevices.getUserMedia({audio: true})
+		})
+	</script>
 </body>
 </html>
 ```
