@@ -1,5 +1,5 @@
 const startButton = document.getElementById("startButton");
-const stopButton = docment.getElementById("stopButton")
+const stopButton = document.getElementById("stopButton")
 
 let audioRecorder; 
 let chunksAudio = [];
