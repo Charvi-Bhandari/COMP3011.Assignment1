@@ -26,7 +26,8 @@ startButton.addEventListener("click", async () =>{
 
 stopButton.addEventListener("click", ()=> {
 		audioRecorder.stop();
+		clearInterval(interval);
 		recordingStatus.textContent = "Not recording";
 });
 
-// Tests done: buttons work
+// Tests done: timer works
