@@ -15,13 +15,16 @@ startButton.addEventListener("click", async () =>{
 	chunksAudio = [];
 	
 	audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
-	audioRecorder.addEventListener('stop',()=>{
+	audioRecorder.addEventListener('stop',async ()=>{
 		
 		const audioTypes = {
 			type:"audio/webm"
 		};
 		const recordedAudio = new Blob(chunksAudio, audioTypes);
-		console.log(recordedAudio)
+		const formData = new FormData();
+		formData.append("audio", recordedAudio);
+		
+		const response = await fetch("/api/audio", {method: "POST", body: formData});
 	});
 	
 	audioRecorder.start();
