@@ -1,7 +1,10 @@
 const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton")
 const recordingStatus = document.getElementById("recordingStatus");
+const recordTimer = document.getElementById("recordTimer");
 
+let timerSeconds = 0;
+let interval;
 let audioRecorder; 
 let chunksAudio = [];
 
@@ -12,14 +15,18 @@ startButton.addEventListener("click", async () =>{
 	audioRecorder.start();
 	recordingStatus.textContent = "Current Status: Audio is being recorded";
 	stopButton.disabled = false;
-		console.log("Recording started");
+	
+	interval = setInterval(()=>{
+		timerSeconds++;
+		recordTimer.textContent = timerSeconds + " seconds"
+	}, 1000);
+	
 	
 });
 
 stopButton.addEventListener("click", ()=> {
 		audioRecorder.stop();
 		recordingStatus.textContent = "Not recording";
-				console.log("Current Status: Recording stopped");
 });
 
 // Tests done: buttons work
