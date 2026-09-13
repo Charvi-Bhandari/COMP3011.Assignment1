@@ -9,6 +9,9 @@ startButton.addEventListener("click", async () =>{
 	audioRecorder = new MediaRecorder(stream);
 	chunksAudio = [];
 	audioRecorder.start();
-	audioRecorder.stop();
 	
+});
+
+stopButton.addEventListener("click", ()=> {
+		audioRecorder.stop();
 });
