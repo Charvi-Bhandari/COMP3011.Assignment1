@@ -9,12 +9,18 @@ let audioRecorder;
 let chunksAudio = [];
 
 startButton.addEventListener("click", async () =>{
+	
 	const stream = await navigator.mediaDevices.getUserMedia({audio: true})
 	audioRecorder = new MediaRecorder(stream);
 	chunksAudio = [];
+	
+	audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
+	
 	audioRecorder.start();
 	recordingStatus.textContent = "Current Status: Audio is being recorded";
 	stopButton.disabled = false;
+	timerSeconds = 0;
+	recordTimer.textContent = "0 seconds";
 	
 	interval = setInterval(()=>{
 		timerSeconds++;
@@ -29,5 +35,6 @@ stopButton.addEventListener("click", ()=> {
 		clearInterval(interval);
 		recordingStatus.textContent = "Not recording";
 });
+
 
 // Tests done: timer works
