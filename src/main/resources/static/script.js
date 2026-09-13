@@ -25,6 +25,8 @@ startButton.addEventListener("click", async () =>{
 		formData.append("audio", recordedAudio);
 		
 		const response = await fetch("/api/audio", {method: "POST", body: formData});
+		const result = await response.text();
+		console.log(result);
 	});
 	
 	audioRecorder.start();
