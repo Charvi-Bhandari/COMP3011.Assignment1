@@ -5,7 +5,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class audioController {
+public class AudioController {
+	
+	private final OpenAIService openAIService;
+	public AudioController(OpenAIService openAIService) {
+		this.openAIService = openAIService;
+	}
+	
 	@PostMapping("/api/audio")
 	public String recieveAudio(@RequestParam("audio") MultipartFile audio) {
 		return "audio: " + audio.getSize() + "bytes";
