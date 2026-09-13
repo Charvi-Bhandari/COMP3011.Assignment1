@@ -15,7 +15,14 @@ startButton.addEventListener("click", async () =>{
 	chunksAudio = [];
 	
 	audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
-	audioRecorder.addEventListener('stop',()=>{console.log(chunksAudio)});
+	audioRecorder.addEventListener('stop',()=>{
+		
+		const audioTypes = {
+			type:"audio/webm"
+		};
+		const recordedAudio = new Blob(chunksAudio, audioTypes);
+		console.log(recordedAudio)
+	});
 	
 	audioRecorder.start();
 	recordingStatus.textContent = "Current Status: Audio is being recorded";
