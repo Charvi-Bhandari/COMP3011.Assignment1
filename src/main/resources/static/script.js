@@ -15,7 +15,7 @@ startButton.addEventListener("click", async () =>{
 	chunksAudio = [];
 	
 	audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
-	audioRecorder.addEventListener('stop',()=>{console.log(chunksAudio)}) // check funtionality
+	audioRecorder.addEventListener('stop',()=>{console.log(chunksAudio)});
 	
 	audioRecorder.start();
 	recordingStatus.textContent = "Current Status: Audio is being recorded";
@@ -38,4 +38,4 @@ stopButton.addEventListener("click", ()=> {
 });
 
 
-// Tests done: timer works
+// Tests done: audio array works
