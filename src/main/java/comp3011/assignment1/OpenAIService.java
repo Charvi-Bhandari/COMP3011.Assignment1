@@ -6,11 +6,18 @@ import org.springframework.web.client.RestClient;
 
 @Service
 public class OpenAIService {
+	
 	@Value("${openai.api.key}")
 	private String apiKey;
 	private final RestClient restClient;
+	
 	public OpenAIService() {
 		restClient = RestClient.builder().baseUrl("https://api.openai.com").build();
+		
+	}
+	
+	public String transcribeAudio() {
+		return "Transcription";
 	}
 
 }

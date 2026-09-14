@@ -14,6 +14,6 @@ public class AudioController {
 	
 	@PostMapping("/api/audio")
 	public String recieveAudio(@RequestParam("audio") MultipartFile audio) {
-		return "audio: " + audio.getSize() + "bytes";
+		return openAIService.transcribeAudio();
 	}
 }
