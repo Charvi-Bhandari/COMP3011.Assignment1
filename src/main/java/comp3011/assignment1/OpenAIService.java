@@ -1,6 +1,7 @@
 package comp3011.assignment1;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +9,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Service
+@Profile("titan")
 public class OpenAIService implements TranscriptionService {
 	
 	@Value("${openai.api.key}")
