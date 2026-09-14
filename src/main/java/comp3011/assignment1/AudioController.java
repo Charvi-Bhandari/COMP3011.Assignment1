@@ -7,13 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class AudioController {
 	
-	private final OpenAIService openAIService;
-	public AudioController(OpenAIService openAIService) {
-		this.openAIService = openAIService;
+	private final TranscriptionService transcriptionService;
+	public AudioController(TranscriptionService transcriptionService) {
+		this.transcriptionService = transcriptionService;
 	}
 	
 	@PostMapping("/api/audio")
 	public String recieveAudio(@RequestParam("audio") MultipartFile audio) {
-		return openAIService.transcribeAudio(audio);
+		return transcriptionService.transcribeAudio(audio);
 	}
 }
