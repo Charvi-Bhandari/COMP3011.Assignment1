@@ -2,6 +2,7 @@ const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton")
 const recordingStatus = document.getElementById("recordingStatus");
 const recordTimer = document.getElementById("recordTimer");
+const transcription = document.getElementById("transcription");
 
 let timerSeconds = 0;
 let interval;
@@ -25,8 +26,8 @@ startButton.addEventListener("click", async () =>{
 		formData.append("audio", recordedAudio);
 		
 		const response = await fetch("/api/audio", {method: "POST", body: formData});
-		const result = await response.text();
-		console.log(result);
+		const result = await response.json();
+		transcription.textContent = result.text;
 	});
 	
 	audioRecorder.start();
