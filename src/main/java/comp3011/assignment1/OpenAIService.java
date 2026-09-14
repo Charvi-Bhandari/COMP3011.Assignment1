@@ -14,11 +14,10 @@ public class OpenAIService implements TranscriptionService {
 	private String apiKey;
 	private final RestClient restClient;
 	
-	public OpenAIService() {
-		restClient = RestClient.builder().baseUrl("https://api.openai.com").build();
-		
+	public OpenAIService(RestClient.Builder restClientBuilder) {
+	    restClient = restClientBuilder.baseUrl("https://api.openai.com").build();
 	}
-	
+		
 	public String transcribeAudio(MultipartFile audio) {
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
 		formData.add("model", "gpt-4o-mini-transcribe");
