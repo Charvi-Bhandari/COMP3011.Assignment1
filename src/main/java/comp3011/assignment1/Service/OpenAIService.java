@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
+import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import org.springframework.util.LinkedMultiValueMap;
@@ -41,6 +42,19 @@ public class OpenAIService implements TranscriptionService {
 				.body(formData)
 				.retrieve()
 				.body(String.class);
+		
+		try {
+		    JsonNode response = objectMapper.readTree(result);
+		    JsonNode usage = response.path("usage");
+
+		    long inputTokens = usage.path("input_tokens").asLong(0);
+		    long outputTokens = usage.path("output_tokens").asLong(0);
+
+		    globalStatsService.addUsage(inputTokens, outputTokens);
+
+		} catch (Exception e) {
+		    throw new RuntimeException("Could not process transcription response.", e);
+		}
 		
 		return result;
 		
