@@ -1,4 +1,4 @@
-package comp3011.assignment1;
+package comp3011.assignment1.Controllers;
 import java.time.Instant;
 import org.springframework.stereotype.Service;
 

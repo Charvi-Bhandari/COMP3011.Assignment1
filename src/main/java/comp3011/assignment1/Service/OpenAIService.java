@@ -1,4 +1,4 @@
-package comp3011.assignment1;
+package comp3011.assignment1.Service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;

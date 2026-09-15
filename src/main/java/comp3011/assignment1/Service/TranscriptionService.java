@@ -1,4 +1,4 @@
-package comp3011.assignment1;
+package comp3011.assignment1.Service;
 
 import org.springframework.web.multipart.MultipartFile;
 
