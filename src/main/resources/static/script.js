@@ -18,6 +18,7 @@ startButton.addEventListener("click", async () =>{
 	audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
 	audioRecorder.addEventListener('stop',async ()=>{
 		
+		stream.getTracks().forEach(track => track.stop());
 		const audioTypes = {
 			type:"audio/webm"
 		};
@@ -48,6 +49,7 @@ stopButton.addEventListener("click", ()=> {
 		audioRecorder.stop();
 		clearInterval(interval);
 		recordingStatus.textContent = "Not recording";
+		stopButton.disabled = true;
 });
 
 
