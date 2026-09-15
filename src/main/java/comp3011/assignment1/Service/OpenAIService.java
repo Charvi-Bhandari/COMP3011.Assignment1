@@ -21,9 +21,12 @@ public class OpenAIService implements TranscriptionService {
 	private final ObjectMapper objectMapper;
 	
 	
-	public OpenAIService(RestClient.Builder restClientBuilder, GlobalStatsService globalStatsService) {
+	public OpenAIService(RestClient.Builder restClientBuilder, 
+			GlobalStatsService globalStatsService,
+			ObjectMapper objectMapper) {
 	    restClient = restClientBuilder.baseUrl("https://api.openai.com").build();
 	    this.globalStatsService = globalStatsService;
+	    this.objectMapper = objectMapper;
 	}
 		
 	public String transcribeAudio(MultipartFile audio) {
