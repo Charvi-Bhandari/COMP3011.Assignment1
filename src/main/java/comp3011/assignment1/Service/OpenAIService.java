@@ -4,11 +4,13 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import reactor.core.publisher.Mono;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -46,13 +48,25 @@ public class OpenAIService implements TranscriptionService {
 
         }).thenCompose(audioBytes -> {
 
+            MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
+
+            bodyBuilder.part("model", "gpt-4o-mini-transcribe");
+            bodyBuilder.part("file", audio.getResource());
+
             return webClient.post()
                     .uri("/v1/audio/transcriptions")
                     .header("Authorization", "Bearer " + apiKey)
-                    .bodyValue(audioBytes)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
                     .retrieve()
                     .bodyToMono(String.class)
                     .map(this::processResponse)
+                    .doOnError(error ->
+                            System.err.println(
+                                    "OpenAI transcription request failed: "
+                                            + error.getMessage()
+                            )
+                    )
                     .toFuture();
 
         });

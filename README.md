@@ -6,7 +6,7 @@ Java Spring Boot speech-to-text web application.
 
 Requires Java 25 and Maven.
 
-Build the project using `Run as -> Maven Build -> group: clean package` after right clicking the project folder.
+Build the project using `Run as -> Maven Build -> goal: clean package` after right clicking the project folder.
 
 Run the application using `java -jar target/Assignment1-0.0.1-SNAPSHOT.jar`.
 
