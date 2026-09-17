@@ -1,3 +1,4 @@
+
 const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton")
 const recordingStatus = document.getElementById("recordingStatus");
@@ -10,68 +11,78 @@ let audioRecorder;
 let chunksAudio = [];
 
 startButton.addEventListener("click", async () =>{
-	
-	const stream = await navigator.mediaDevices.getUserMedia({audio: true})
-	audioRecorder = new MediaRecorder(stream);
-	chunksAudio = [];
-	
-	audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
-	audioRecorder.addEventListener('stop',async ()=>{
-		const audioTypes = {
-		        type: "audio/webm"
-		    };
 
-		    const recordedAudio = new Blob(chunksAudio, audioTypes);
+	try{
 
-		    const formData = new FormData();
+		const stream = await navigator.mediaDevices.getUserMedia({audio: true})
+		audioRecorder = new MediaRecorder(stream);
+		chunksAudio = [];
+		audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
+		audioRecorder.addEventListener('stop',async ()=>{
 
-		    formData.append("audio", recordedAudio);
+			const audioTypes = {
 
-		    transcription.textContent = "Transcribing...";
+			        type: "audio/webm"
 
-		    try {
+			    };
 
-		        const response = await fetch("/api/audio", {
-		            method: "POST",
-		            body: formData
-		        });
+			    const recordedAudio = new Blob(chunksAudio, audioTypes);
+			    const formData = new FormData();
+			    formData.append("audio", recordedAudio);
+			    transcription.textContent = "Transcribing...";
 
-		        if (!response.ok) {
-		            throw new Error("Transcription request failed.");
-		        }
+			    try {
 
-		        const result = await response.json();
+			        const response = await fetch("/api/audio", {
+			            method: "POST",
+			            body: formData
 
-		        transcription.textContent = result.text;
+			        });
 
-		    } catch (error) {
+			        if (!response.ok) {
 
-		        transcription.textContent =
-		            "Sorry, the transcription could not be completed.";
+			            throw new Error("Transcription request failed.");
 
-		    }
-		});
-	
-	audioRecorder.start();
-	recordingStatus.textContent = "Current Status: Audio is being recorded";
-	stopButton.disabled = false;
-	timerSeconds = 0;
-	recordTimer.textContent = "0 seconds";
-	
-	interval = setInterval(()=>{
-		timerSeconds++;
-		recordTimer.textContent = timerSeconds + " seconds"
-	}, 1000);
-	
-	
+			        }
+
+			        const result = await response.json();
+			        transcription.textContent = result.text;
+
+			    } catch (error) {
+
+			        transcription.textContent =
+			            "Sorry, the transcription could not be completed.";
+			    }
+
+			});
+
+		audioRecorder.start();
+
+		recordingStatus.textContent = "Current Status: Audio is being recorded";
+		stopButton.disabled = false;
+		timerSeconds = 0;
+		recordTimer.textContent = "0 seconds";
+
+		interval = setInterval(()=>{
+
+			timerSeconds++;
+			recordTimer.textContent = timerSeconds + " seconds"
+
+		}, 1000);
+
+	} catch (error) {recordingStatus.textContent ="Microphone access is required to record.";
+	}
+
 });
 
 stopButton.addEventListener("click", ()=> {
+
 		audioRecorder.stop();
 		clearInterval(interval);
 		recordingStatus.textContent = "Not recording";
 		stopButton.disabled = true;
+
 });
 
-
 // Tests done: audio array works
+
