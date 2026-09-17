@@ -13,7 +13,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
-@Profile("titan")
+@Profile("!local")
 public class OpenAIService implements TranscriptionService {
     private final GlobalStatsService globalStatsService;
     private final WebClient webClient;

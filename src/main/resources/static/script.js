@@ -17,19 +17,40 @@ startButton.addEventListener("click", async () =>{
 	
 	audioRecorder.addEventListener("dataavailable", (event)=>{chunksAudio.push(event.data)});
 	audioRecorder.addEventListener('stop',async ()=>{
-		
-		stream.getTracks().forEach(track => track.stop());
 		const audioTypes = {
-			type:"audio/webm"
-		};
-		const recordedAudio = new Blob(chunksAudio, audioTypes);
-		const formData = new FormData();
-		formData.append("audio", recordedAudio);
-		
-		const response = await fetch("/api/audio", {method: "POST", body: formData});
-		const result = await response.json();
-		transcription.textContent = result.text;
-	});
+		        type: "audio/webm"
+		    };
+
+		    const recordedAudio = new Blob(chunksAudio, audioTypes);
+
+		    const formData = new FormData();
+
+		    formData.append("audio", recordedAudio);
+
+		    transcription.textContent = "Transcribing...";
+
+		    try {
+
+		        const response = await fetch("/api/audio", {
+		            method: "POST",
+		            body: formData
+		        });
+
+		        if (!response.ok) {
+		            throw new Error("Transcription request failed.");
+		        }
+
+		        const result = await response.json();
+
+		        transcription.textContent = result.text;
+
+		    } catch (error) {
+
+		        transcription.textContent =
+		            "Sorry, the transcription could not be completed.";
+
+		    }
+		});
 	
 	audioRecorder.start();
 	recordingStatus.textContent = "Current Status: Audio is being recorded";
