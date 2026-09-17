@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,8 +51,21 @@ public class OpenAIService implements TranscriptionService {
 
             MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
 
+            ByteArrayResource audioResource = new ByteArrayResource(audioBytes) {
+                @Override
+                public String getFilename() {
+                    return "recording.webm";
+                }
+            };
+
             bodyBuilder.part("model", "gpt-4o-mini-transcribe");
-            bodyBuilder.part("file", audio.getResource());
+
+            bodyBuilder.part("file", audioResource)
+                    .contentType(MediaType.parseMediaType(
+                            audio.getContentType() != null
+                                    ? audio.getContentType()
+                                    : "audio/webm"
+                    ));
 
             return webClient.post()
                     .uri("/v1/audio/transcriptions")
