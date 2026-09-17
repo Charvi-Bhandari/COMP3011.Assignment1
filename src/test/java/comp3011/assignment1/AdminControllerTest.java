@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.mock;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import comp3011.assignment1.Controllers.AdminController;
 import comp3011.assignment1.Service.ServerStateService;
@@ -21,7 +23,11 @@ class AdminControllerTest {
 
         ServerStateService serverStateService = new ServerStateService();
         ShutdownStateService shutdownStateService = new ShutdownStateService();
-        AdminController controller = new AdminController(serverStateService, shutdownStateService);
+        
+        ConfigurableApplicationContext applicationContext =
+                mock(ConfigurableApplicationContext.class);
+        
+        AdminController controller = new AdminController(serverStateService, shutdownStateService, applicationContext);
         UptimeResponse response = controller.getUptime();
 
         assertNotNull(response);
@@ -44,10 +50,14 @@ class AdminControllerTest {
     void shutdowAcceptedFirstRequest() {
         ServerStateService serverStateService = new ServerStateService();
         ShutdownStateService shutdownStateService = new ShutdownStateService();
+        
+        ConfigurableApplicationContext applicationContext =
+                mock(ConfigurableApplicationContext.class);
 
         AdminController controller = new AdminController(
                 serverStateService,
-                shutdownStateService
+                shutdownStateService,
+                applicationContext
         );
         ResponseEntity<?> response = controller.shutdown();
 
@@ -66,9 +76,14 @@ class AdminControllerTest {
     void shutdownReturnCnflctAlreadyRequested() {
         ServerStateService serverStateService = new ServerStateService();
         ShutdownStateService shutdownStateService = new ShutdownStateService();
+        
+        ConfigurableApplicationContext applicationContext =
+                mock(ConfigurableApplicationContext.class);
+        
         AdminController controller = new AdminController(
                 serverStateService,
-                shutdownStateService
+                shutdownStateService,
+                applicationContext
         );
 
         controller.shutdown();

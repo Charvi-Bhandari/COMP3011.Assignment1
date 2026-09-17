@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import comp3011.assignment1.Service.ServerStateService;
 import comp3011.assignment1.response.UptimeResponse;
@@ -21,11 +22,15 @@ public class AdminController {
 
     private final ServerStateService serverStateService;
     private final ShutdownStateService shutdownStateService;
+    private final ConfigurableApplicationContext applicationContext;
     
     public AdminController(ServerStateService serverStateService, 
-    		ShutdownStateService shutdownStateService) {
-        this.serverStateService = serverStateService;
+    		ShutdownStateService shutdownStateService,
+    		ConfigurableApplicationContext applicationContext) {
+        
+    	this.serverStateService = serverStateService;
         this.shutdownStateService = shutdownStateService;
+        this.applicationContext = applicationContext;
     }
     @GetMapping("/uptime")
     public UptimeResponse getUptime() {
@@ -39,6 +44,17 @@ public class AdminController {
     public ResponseEntity<?> shutdown() {
 
         if (shutdownStateService.requestShutdown()) {
+        	
+        	Thread shutdownThread = new Thread(() -> {
+        		try {
+        			Thread.sleep(100);
+        			applicationContext.close();
+        			
+        		}
+        		catch(InterruptedException e) {
+        			Thread.currentThread().interrupt();
+        		}
+        	});
 
             return ResponseEntity
                     .accepted()
