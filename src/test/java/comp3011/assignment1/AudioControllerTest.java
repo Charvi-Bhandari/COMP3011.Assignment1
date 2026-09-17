@@ -1,7 +1,8 @@
 package comp3011.assignment1;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,19 +11,23 @@ import comp3011.assignment1.Service.TranscriptionService;
 
 class AudioControllerTest {
 
-	@Test
+    @Test
     void audioControllerReturnsTranscription() {
 
-        TranscriptionService service = audio -> "test transcription";
+        TranscriptionService service =
+                audio -> CompletableFuture.completedFuture(
+                        "test transcription"
+                );
 
         AudioController controller =
                 new AudioController(service);
 
-        String result = controller.recieveAudio(null);
+        CompletableFuture<String> result =
+                controller.recieveAudio(null);
 
         assertEquals(
                 "test transcription",
-                result
+                result.join()
         );
     }
 }

@@ -1,63 +1,81 @@
 package comp3011.assignment1.Service;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import reactor.core.publisher.Mono;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 @Service
 @Profile("titan")
 public class OpenAIService implements TranscriptionService {
-	private final GlobalStatsService globalStatsService;
-	@Value("${openai.api.key}")
-	private String apiKey;
-	private final RestClient restClient;
-	private final ObjectMapper objectMapper;
-	
-	
-	public OpenAIService(RestClient.Builder restClientBuilder, 
-			GlobalStatsService globalStatsService,
-			ObjectMapper objectMapper) {
-	    restClient = restClientBuilder.baseUrl("https://api.openai.com").build();
-	    this.globalStatsService = globalStatsService;
-	    this.objectMapper = objectMapper;
-	}
-		
-	public String transcribeAudio(MultipartFile audio) {
-		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
-		formData.add("model", "gpt-4o-mini-transcribe");
-		formData.add("file", audio.getResource());
-		
-		String result = restClient.post()
-				.uri("/v1/audio/transcriptions")
-				.header("Authorization", "Bearer " + apiKey)
-				.contentType(org.springframework.http.MediaType.MULTIPART_FORM_DATA)
-				.body(formData)
-				.retrieve()
-				.body(String.class);
-		
-		try {
-		    JsonNode response = objectMapper.readTree(result);
-		    JsonNode usage = response.path("usage");
+    private final GlobalStatsService globalStatsService;
+    private final WebClient webClient;
+    private final ObjectMapper objectMapper;
 
-		    long inputTokens = usage.path("input_tokens").asLong(0);
-		    long outputTokens = usage.path("output_tokens").asLong(0);
+    @Value("${openai.api.key}")
+    private String apiKey;
+    public OpenAIService(
+            WebClient.Builder webClientBuilder,
+            GlobalStatsService globalStatsService,
+            ObjectMapper objectMapper) {
 
-		    globalStatsService.addUsage(inputTokens, outputTokens);
+        this.webClient = webClientBuilder
+                .baseUrl("https://api.openai.com")
+                .build();
 
-		} catch (Exception e) {
-		    throw new RuntimeException("Could not process transcription response.", e);
-		}
-		
-		return result;
-		
-	}
+        this.globalStatsService = globalStatsService;
+        this.objectMapper = objectMapper;
+    }
 
+    @Override
+    public CompletableFuture<String> transcribeAudio(MultipartFile audio) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            try {
+                return audio.getBytes();
+            } catch (Exception e) {
+                throw new RuntimeException( "Could not read audio.", e );
+            }
+
+        }).thenCompose(audioBytes -> {
+
+            return webClient.post()
+                    .uri("/v1/audio/transcriptions")
+                    .header("Authorization", "Bearer " + apiKey)
+                    .bodyValue(audioBytes)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .map(this::processResponse)
+                    .toFuture();
+
+        });
+    }
+    private String processResponse(String result) {
+
+        try {
+
+            JsonNode response = objectMapper.readTree(result);
+
+            JsonNode usage = response.path("usage");
+
+            long inputTokens = usage.path("input_tokens").asLong(0);
+
+            long outputTokens = usage.path("output_tokens").asLong(0);
+
+            globalStatsService.addUsage(inputTokens, outputTokens
+            );
+
+            return result;
+
+        } catch (Exception e) {
+            throw new RuntimeException( "Could not process transcription response.",  e );
+        }
+    }
 }
