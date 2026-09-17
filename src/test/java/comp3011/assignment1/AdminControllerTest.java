@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -106,5 +108,27 @@ class AdminControllerTest {
                 "/api/v1/admin/shutdown",
                 errorResponse.getPath()
         );
+    }
+    
+    @Test
+    void shutdownCloseAppContext() throws InterruptedException {
+
+        ServerStateService serverStateService = new ServerStateService();
+        ShutdownStateService shutdownStateService = new ShutdownStateService();
+
+        ConfigurableApplicationContext applicationContext =
+                mock(ConfigurableApplicationContext.class);
+
+        AdminController controller = new AdminController(
+                serverStateService,
+                shutdownStateService,
+                applicationContext
+        );
+
+        controller.shutdown();
+
+        Thread.sleep(500);
+
+        verify(applicationContext).close();
     }
 }

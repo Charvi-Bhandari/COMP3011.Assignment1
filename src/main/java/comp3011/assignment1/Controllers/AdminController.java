@@ -2,6 +2,7 @@ package comp3011.assignment1.Controllers;
 
 import java.time.Instant;
 
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +56,8 @@ public class AdminController {
         			Thread.currentThread().interrupt();
         		}
         	});
+        	
+        	shutdownThread.start();
 
             return ResponseEntity
                     .accepted()
