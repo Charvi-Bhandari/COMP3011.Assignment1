@@ -22,4 +22,6 @@ public class UptimeResponse {
     public double getServerUptimeSeconds() {
         return serverUptimeSeconds;
     }
+    
+    
 }
