@@ -20,7 +20,8 @@ class AdminControllerTest {
     void getUptimeReturnsServerUptimeInformation() {
 
         ServerStateService serverStateService = new ServerStateService();
-        AdminController controller = new AdminController(serverStateService);
+        ShutdownStateService shutdownStateService = new ShutdownStateService();
+        AdminController controller = new AdminController(serverStateService, shutdownStateService);
         UptimeResponse response = controller.getUptime();
 
         assertNotNull(response);
