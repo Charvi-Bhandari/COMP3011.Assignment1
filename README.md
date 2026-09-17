@@ -2,6 +2,8 @@
 
 Java Spring Boot speech-to-text web application.
 
+GitHub Repository: https://github.com/Charvi-Bhandari/COMP3011.Assignment1.git
+
 ## Running the application
 
 Requires Java 25 and Maven.
